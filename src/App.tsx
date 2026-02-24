@@ -90,16 +90,14 @@ const BloomingFlower = () => {
   );
 };
 
-const PhotoFrame = ({ label, className, delay }: { label: string; className: string; delay: number }) => (
+const PhotoFrame = ({ children, className, delay }: { children: React.ReactNode; className: string; delay: number }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.5 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ delay, duration: 0.8, type: "spring" }}
     className={`absolute w-24 h-32 md:w-32 md:h-40 bg-white p-2 rounded-2xl shadow-xl border-4 border-pink-200 flex flex-col items-center justify-center overflow-hidden animate-sway ${className}`}
   >
-    <div className="w-full h-full bg-pink-100 rounded-xl flex items-center justify-center text-pink-300 font-bold text-sm text-center p-2">
-      {label}
-    </div>
+    {children}
   </motion.div>
 );
 
@@ -148,6 +146,7 @@ const Cityscape = () => {
 
 export default function App() {
   const [stage, setStage] = useState<'loading' | 'intro' | 'main'>('loading');
+  const [showVideo, setShowVideo] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setStage('intro'), 2000);
@@ -225,49 +224,84 @@ export default function App() {
             <div className="relative w-full max-w-4xl h-64 md:h-80 flex items-center justify-center z-10">
               {/* Top Pair - Wide apart */}
               <PhotoFrame 
-                label="Ảnh 1" 
                 className="top-0 left-4 md:left-12 -rotate-6" 
                 delay={3} 
-              />
+              >
+                <img src="anh/1.jpg" className="w-full h-full object-cover rounded-xl" />
+              </PhotoFrame>
+
               <PhotoFrame 
-                label="Ảnh 2" 
                 className="top-0 right-4 md:right-12 rotate-6" 
                 delay={3.2} 
-              />
+              >
+                <img src="anh/2.jpg" className="w-full h-full object-cover rounded-xl" />
+              </PhotoFrame>
               
               {/* Bottom Pair - Closer to center */}
               <PhotoFrame 
-                label="Ảnh 3" 
                 className="bottom-0 left-16 md:left-32 -rotate-3" 
                 delay={3.4} 
-              />
+              >
+                <img src="anh/3.jpg" className="w-full h-full object-cover rounded-xl" />
+              </PhotoFrame>
+
               <PhotoFrame 
-                label="Ảnh 4" 
                 className="bottom-0 right-16 md:right-32 rotate-3" 
                 delay={3.6} 
-              />
+              >
+                <img src="https://picsum.photos/seed/11a_4/300/400" className="w-full h-full object-cover rounded-xl" />
+              </PhotoFrame>
 
               <BloomingFlower />
             </div>
 
             <Cityscape />
 
-            {/* Video Link Button */}
+            {/* Video Section */}
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 3.5 }}
-              className="mt-8 z-30"
+              className="mt-8 z-30 flex flex-col items-center"
             >
-              <a
-                href="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-pink-200 hover:bg-pink-500 hover:text-white transition-all group"
+              <button
+                onClick={() => setShowVideo(true)}
+                className="flex items-center gap-2 bg-white/80 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-pink-200 hover:bg-pink-500 hover:text-white transition-all group cursor-pointer"
               >
                 <Play size={20} className="fill-current" />
-                <span className="font-bold">XEM VIDEO CHÚC MỪNG (MP4)</span>
-              </a>
+                <span className="font-bold">BÍ MẬT KHÔNG THỂ TIẾT LỘ</span>
+              </button>
+
+              <AnimatePresence>
+                {showVideo && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 md:p-8"
+                  >
+                    <motion.div 
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.9, opacity: 0 }}
+                      className="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+                    >
+                      <button 
+                        onClick={() => setShowVideo(false)}
+                        className="absolute top-4 right-4 z-[110] bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-md transition-colors"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                      </button>
+                      <video 
+                        src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" 
+                        controls 
+                        autoPlay
+                        className="w-full h-full object-contain" 
+                      />
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
 
             <motion.p
